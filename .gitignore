@@ -1,3 +1,7 @@
+# Custom PyPaper ginores
+Feeds/*
+!Feeds/exampleFeed.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,0 +1,52 @@
+{
+  "login": {
+    "smtp server": "smtp.gmail.com",
+    "smtp port": 587,
+    "email address":"MyMail@gmail.com",
+    "email password":"My Gmail App Password"
+  },
+  "feeds": {
+    "Weather": {
+      "Local Weather": {
+        "url": "http://www.rssweather.com/zipcode/10001/rss.php",
+        "max posts": 6,
+        "full text": true,
+        "atom feed": false
+      },
+      "Hurricane Monitoring": {
+        "url": "https://www.nhc.noaa.gov/xml/TWOAT.xml",
+        "max posts": 6,
+        "full text": true,
+        "atom feed": false
+      }
+    },
+    "News": {
+      "Local News": {
+        "url": "https://www.nbcnewyork.com/",
+        "max posts": 6,
+        "full text": false,
+        "atom feed": false
+      },
+      "Japan Times": {
+        "url": "https://www.japantimes.co.jp/news/national/feed/",
+        "max posts": 6,
+        "full text": false,
+        "atom feed": false
+      }
+    },
+    "Entertainment": {
+      "GG Deals": {
+        "url": "https://gg.deals/news/freebies/feed/",
+        "max posts": 6,
+        "full text": false,
+        "atom feed": false
+      },
+      "r/Minecraft": {
+        "url": "https://www.reddit.com/r/minecraft/top.rss?=day",
+        "max posts": 6,
+        "full text": false,
+        "atom feed": true
+      }
+    }
+  }
+}
