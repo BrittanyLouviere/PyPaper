@@ -7,6 +7,7 @@ from email.message import EmailMessage
 feedDir = os.path.join(os.path.dirname(__file__), "Feeds")
 for filename in os.listdir(feedDir):
   if filename.endswith(".json") and not filename == "exampleFeed.json":
+    
     # Open and read feed file
     file = open(os.path.join(feedDir, filename), "r")
     feed = json.load(file)
@@ -14,9 +15,10 @@ for filename in os.listdir(feedDir):
 
     # Create Email
     msg = EmailMessage()
-    msg.set_content("Hello World!")
-    msg['Subject'] = "Hello"
+    msg['Subject'] = "PyPaper - " + os.path.splitext(filename)[0]
     msg['From'] = msg['To'] = feed["login"]["email address"]
+
+    msg.set_content("Hello World!")
 
     # Create SMTP connection
     s = smtplib.SMTP(feed["login"]["smtp server"], feed["login"]["smtp port"])
