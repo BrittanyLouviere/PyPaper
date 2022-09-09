@@ -21,20 +21,25 @@ for filename in os.listdir(feedDir):
     msg['Subject'] = "PyPaper - " + os.path.splitext(filename)[0]
     msg['From'] = msg['To'] = feed["login"]["email address"]
 
+    # Fix common ssl issue
+    if hasattr(ssl, '_create_unverified_context'):
+      ssl._create_default_https_context = ssl._create_unverified_context
+
     # Create message content
     content = ""
+
+    # HTML templates
     sectionHeaderHTML = "<h1>{0}</h1>"
     siteHeaderHTML = "<a href='{0}'><h2>{1}</h2></a>"
     entryHeaderHTML = "<a href='{0}'><h3>{1}</h3></a>"
     entryContentHTML = "<p>{0}</p>"
+
     for section in feed["feeds"]:
       # Create header for feed section
       content += sectionHeaderHTML.format(section)
 
       for site in feed["feeds"][section]:
         # Parse Feed
-        if hasattr(ssl, '_create_unverified_context'):
-          ssl._create_default_https_context = ssl._create_unverified_context
         parsedFeed = feedparser.parse(site["url"])
 
         # Create header for site and start unordered list
