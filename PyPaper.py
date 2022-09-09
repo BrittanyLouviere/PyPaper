@@ -37,17 +37,25 @@ for filename in os.listdir(feedDir):
           ssl._create_default_https_context = ssl._create_unverified_context
         parsedFeed = feedparser.parse(site["url"])
 
-        # Create header for site
+        # Create header for site and start unordered list
         # if an alternative title is specified in the json, use that instead of the feed title
         title = site["title"] if "title" in site else parsedFeed["feed"]["title"]
         content += siteHeaderHTML.format(parsedFeed["feed"]["link"], title)
+        content += "<ul>"
 
-        # Iterarte through entries
+        # Iterarte through entries and add each as a list item
         for i in range(min(site["max posts"], len(parsedFeed["entries"]))):
           entry = parsedFeed["entries"][i]
+          content += "<li>"
           content += entryHeaderHTML.format(entry["link"], entry["title"])
           if site["full text"]:
             content += entryContentHTML.format(entry["summary"])
+          content += "</li>"
+
+        # End unordered list
+        content += "</ul>"
+
+    # Add content to email message   
     msg.set_content(MIMEText(content, "html"))
 
     # Create SMTP connection
