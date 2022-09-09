@@ -25,7 +25,7 @@ for filename in os.listdir(feedDir):
     content = ""
     sectionHeaderHTML = "<h1>{0}</h1>\n"
     siteHeaderHTML = "<a href='{0}'><h2>{1}</h2></a>\n"
-    entryHeaderHTML = "<a href='{0}'><h3>{1}</h3></a>'\n"
+    entryHeaderHTML = "<a href='{0}'><h3>{1}</h3></a>\n"
     entryContentHTML = "<p>{0}</p>\n"
     for section in feed["feeds"]:
       # Create header for feed section
