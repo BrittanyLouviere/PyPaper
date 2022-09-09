@@ -6,41 +6,44 @@
     "email password":"My Gmail App Password"
   },
   "feeds": {
-    "Weather": {
-      "Local Weather": {
+    "Weather": [
+      {
         "url": "http://www.rssweather.com/zipcode/10001/rss.php",
         "max posts": 6,
         "full text": true
       },
-      "Hurricane Monitoring": {
+      {
+        "title": "Hurricane Monitoring",
         "url": "https://www.nhc.noaa.gov/xml/TWOAT.xml",
         "max posts": 6,
-        "full text": true
+        "full text": false
       }
-    },
-    "News": {
-      "Local News": {
+    ],
+    "News": [
+      {
         "url": "https://www.nbcnewyork.com/",
         "max posts": 6,
         "full text": false
       },
-      "Japan Times": {
+      {
+        "title": "Japan Times",
         "url": "https://www.japantimes.co.jp/news/national/feed/",
         "max posts": 6,
         "full text": false
       }
-    },
-    "Entertainment": {
-      "GG Deals": {
+    ],
+    "Entertainment": [
+      {
         "url": "https://gg.deals/news/freebies/feed/",
         "max posts": 6,
         "full text": false
       },
-      "r/Minecraft": {
+      {
+        "title": "r/Minecraft",
         "url": "https://www.reddit.com/r/minecraft/top.rss?=day",
         "max posts": 6,
         "full text": false
       }
-    }
+    ]
   }
 }

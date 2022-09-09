@@ -32,20 +32,21 @@ for filename in os.listdir(feedDir):
       content += sectionHeaderHTML.format(section)
 
       for site in feed["feeds"][section]:
-        siteInfo = feed["feeds"][section][site]
         # Parse Feed
         if hasattr(ssl, '_create_unverified_context'):
           ssl._create_default_https_context = ssl._create_unverified_context
-        parsedFeed = feedparser.parse(siteInfo["url"])
+        parsedFeed = feedparser.parse(site["url"])
 
         # Create header for site
-        content += siteHeaderHTML.format(parsedFeed["feed"]["link"], parsedFeed["feed"]["title"])
+        # if an alternative title is specified in the json, use that instead of the feed title
+        title = site["title"] if "title" in site else parsedFeed["feed"]["title"]
+        content += siteHeaderHTML.format(parsedFeed["feed"]["link"], title)
 
         # Iterarte through entries
-        for i in range(min(siteInfo["max posts"], len(parsedFeed["entries"]))):
+        for i in range(min(site["max posts"], len(parsedFeed["entries"]))):
           entry = parsedFeed["entries"][i]
           content += entryHeaderHTML.format(entry["link"], entry["title"])
-          if siteInfo["full text"]:
+          if site["full text"]:
             content += entryContentHTML.format(entry["summary"])
     msg.set_content(MIMEText(content, "html"))
 
