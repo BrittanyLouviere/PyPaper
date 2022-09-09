@@ -45,7 +45,8 @@ for filename in os.listdir(feedDir):
         for i in range(min(siteInfo["max posts"], len(parsedFeed["entries"]))):
           entry = parsedFeed["entries"][i]
           content += entryHeaderHTML.format(entry["link"], entry["title"])
-          content += entryContentHTML.format(entry["summary"])
+          if siteInfo["full text"]:
+            content += entryContentHTML.format(entry["summary"])
     msg.set_content(MIMEText(content, "html"))
 
     # Create SMTP connection
