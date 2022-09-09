@@ -26,16 +26,17 @@ for filename in os.listdir(feedDir):
     for section in feed["feeds"]:
       # Create header for feed section
       content += "<h1>" + section + "</h1>\n"
+
       for site in feed["feeds"][section]:
         siteInfo = feed["feeds"][section][site]
-        if not siteInfo["atom feed"]:
-          # Parse Feed
-          if hasattr(ssl, '_create_unverified_context'):
-            ssl._create_default_https_context = ssl._create_unverified_context
-          parsedFeed = feedparser.parse(siteInfo["url"])
-          # Create header for site
-          siteHeader = "<a href='{0}'><h2>{1}</h2></a>\n"
-          content += siteHeader.format(parsedFeed["feed"]["link"], parsedFeed["feed"]["title"])
+        # Parse Feed
+        if hasattr(ssl, '_create_unverified_context'):
+          ssl._create_default_https_context = ssl._create_unverified_context
+        parsedFeed = feedparser.parse(siteInfo["url"])
+
+        # Create header for site
+        siteHeader = "<a href='{0}'><h2>{1}</h2></a>\n"
+        content += siteHeader.format(parsedFeed["feed"]["link"], parsedFeed["feed"]["title"])
     msg.set_content(MIMEText(content, "html"))
 
     # Create SMTP connection
