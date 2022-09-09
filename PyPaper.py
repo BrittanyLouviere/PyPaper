@@ -23,9 +23,13 @@ for filename in os.listdir(feedDir):
 
     # Create message content
     content = ""
+    sectionHeaderHTML = "<h1>{0}</h1>\n"
+    siteHeaderHTML = "<a href='{0}'><h2>{1}</h2></a>\n"
+    entryHeaderHTML = "<a href='{0}'><h3>{1}</h3></a>'\n"
+    entryContentHTML = "<p>{0}</p>\n"
     for section in feed["feeds"]:
       # Create header for feed section
-      content += "<h1>" + section + "</h1>\n"
+      content += sectionHeaderHTML.format(section)
 
       for site in feed["feeds"][section]:
         siteInfo = feed["feeds"][section][site]
@@ -35,8 +39,13 @@ for filename in os.listdir(feedDir):
         parsedFeed = feedparser.parse(siteInfo["url"])
 
         # Create header for site
-        siteHeader = "<a href='{0}'><h2>{1}</h2></a>\n"
-        content += siteHeader.format(parsedFeed["feed"]["link"], parsedFeed["feed"]["title"])
+        content += siteHeaderHTML.format(parsedFeed["feed"]["link"], parsedFeed["feed"]["title"])
+
+        # Iterarte through entries
+        for i in range(min(siteInfo["max posts"], len(parsedFeed["entries"]))):
+          entry = parsedFeed["entries"][i]
+          content += entryHeaderHTML.format(entry["link"], entry["title"])
+          content += entryContentHTML.format(entry["summary"])
     msg.set_content(MIMEText(content, "html"))
 
     # Create SMTP connection
