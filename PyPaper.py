@@ -23,10 +23,10 @@ for filename in os.listdir(feedDir):
 
     # Create message content
     content = ""
-    sectionHeaderHTML = "<h1>{0}</h1>\n"
-    siteHeaderHTML = "<a href='{0}'><h2>{1}</h2></a>\n"
-    entryHeaderHTML = "<a href='{0}'><h3>{1}</h3></a>\n"
-    entryContentHTML = "<p>{0}</p>\n"
+    sectionHeaderHTML = "<h1>{0}</h1>"
+    siteHeaderHTML = "<a href='{0}'><h2>{1}</h2></a>"
+    entryHeaderHTML = "<a href='{0}'><h3>{1}</h3></a>"
+    entryContentHTML = "<p>{0}</p>"
     for section in feed["feeds"]:
       # Create header for feed section
       content += sectionHeaderHTML.format(section)
