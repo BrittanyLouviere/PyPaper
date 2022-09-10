@@ -62,7 +62,8 @@ for filename in os.listdir(feedDir):
           entry = parsedFeed["entries"][i]
 
           # Parse datetime and check if the entry is within the user's set timeframe
-          entryDate = datetime.fromtimestamp(timegm(entry.published_parsed))
+          # If there isn't a published date for the item, assume the item was published now and allow it
+          entryDate = datetime.fromtimestamp(timegm(entry["published_parsed"])) if "published_parsed" in entry else datetime.now()
           if entryDate > timeFrame:
             content += "<li>"
             content += entryHeaderHTML.format(entry["link"], entry["title"])
