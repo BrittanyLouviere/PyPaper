@@ -56,10 +56,14 @@ for filename in os.listdir(feedDir):
         # if an alternative url is specified in the json, use that instead of the feed url
         title = site["title"] if "title" in site else parsedFeed["feed"]["title"]
         link = site["alternate url"] if "alternate url" in site else parsedFeed["feed"]["link"]
-        content += siteHeaderHTML.format(link, title)
-        content += "<ul>"
+
+        # Hold site content in a temp variable incase there are no entries
+        siteContent = ""
+        siteContent += siteHeaderHTML.format(link, title)
+        siteContent += "<ul>"
 
         # Iterarte through entries and add each as a list item
+        hasEntries = False
         for i in range(min(site["max posts"], len(parsedFeed["entries"]))):
           entry = parsedFeed["entries"][i]
 
@@ -67,11 +71,16 @@ for filename in os.listdir(feedDir):
           # If there isn't a published date for the item, assume the item was published now and allow it
           entryDate = datetime.fromtimestamp(timegm(entry["published_parsed"])) if "published_parsed" in entry else datetime.now()
           if entryDate > timeFrame:
-            content += "<li>"
-            content += entryHeaderHTML.format(entry["link"], entry["title"])
+            hasEntries = True
+            siteContent += "<li>"
+            siteContent += entryHeaderHTML.format(entry["link"], entry["title"])
             if site["full text"]:
-              content += entryContentHTML.format(entry["summary"])
-            content += "</li>"
+              siteContent += entryContentHTML.format(entry["summary"])
+            siteContent += "</li>"
+        
+        # Add the site's content to the email content only if there are entries to display
+        if hasEntries:
+          content += siteContent
 
         # End unordered list
         content += "</ul>"
