@@ -67,18 +67,22 @@ for filename in os.listdir(feedDir):
             # Iterarte through entries and add each as a list item
             hasEntries = False
             for i in range(min(site["max posts"], len(parsedFeed["entries"]))):
-              entry = parsedFeed["entries"][i]
+              try:
+                entry = parsedFeed["entries"][i]
 
-              # Parse datetime and check if the entry is within the user's set timeframe
-              # If there isn't a published date for the item, assume the item was published now and allow it
-              entryDate = datetime.fromtimestamp(timegm(entry["published_parsed"])) if "published_parsed" in entry else datetime.now()
-              if entryDate > timeFrame:
+                # Parse datetime and check if the entry is within the user's set timeframe
+                # If there isn't a published date for the item, assume the item was published now and allow it
+                entryDate = datetime.fromtimestamp(timegm(entry["published_parsed"])) if "published_parsed" in entry else datetime.now()
+                if entryDate > timeFrame:
+                  hasEntries = True
+                  siteContent += "<li>"
+                  siteContent += entryHeaderHTML.format(entry["link"], entry["title"])
+                  if site["full text"]:
+                    siteContent += entryContentHTML.format(entry["summary"])
+                  siteContent += "</li>"
+              except Exception as e:
+                siteContent += "<li>Error with entry: {} {}</li>".format(str(type(e)).replace("<", "").replace(">", ""), e)
                 hasEntries = True
-                siteContent += "<li>"
-                siteContent += entryHeaderHTML.format(entry["link"], entry["title"])
-                if site["full text"]:
-                  siteContent += entryContentHTML.format(entry["summary"])
-                siteContent += "</li>"
             
             # Add the site's content to the email content only if there are entries to display
             if hasEntries:
@@ -89,6 +93,7 @@ for filename in os.listdir(feedDir):
           except Exception as e:
             content += "<h2>Error with site: {}</h2>".format(site["url"])
             content += "<ul><li>{}</li><li>{}</li></ul>".format(str(type(e)).replace("<", "").replace(">", ""), e)
+            
     except Exception as e:
       content = "<h1>Error while creating feed:</h1>"
       content += "<p>{}</p>".format(str(type(e)).replace("<", "").replace(">", ""))
