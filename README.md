@@ -14,5 +14,6 @@ A self hosted python script to compile and send RSS and ATOM feeds to your email
 - The "time frame" value is optional. If set, it will limit shown entries to those within that time frame.
   - EX: If "time frame" is set to "12:30" then only entries that were published in the last 12 hours and 30 minutes will be shown
 - The "title" key is optional if you wish to customize the name of an RSS/ATOM feed
+- The "alternate url" key is optional and allows the user to specify a different url to use as the site's hyperlink rather than the url specified in the site's feed
 - Set the "full text" value to true if you want the content of the feed item in the email instead of just the title
   - Some feeds may only provide a snippet of the content instead of the full text

@@ -36,6 +36,7 @@
     "Entertainment": [
       {
         "url": "https://gg.deals/news/freebies/feed/",
+        "alternate url": "https://gg.deals/news/freebies/",
         "max posts": 6,
         "full text": false
       },

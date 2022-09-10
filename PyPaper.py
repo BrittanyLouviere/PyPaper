@@ -53,8 +53,10 @@ for filename in os.listdir(feedDir):
 
         # Create header for site and start unordered list
         # if an alternative title is specified in the json, use that instead of the feed title
+        # if an alternative url is specified in the json, use that instead of the feed url
         title = site["title"] if "title" in site else parsedFeed["feed"]["title"]
-        content += siteHeaderHTML.format(parsedFeed["feed"]["link"], title)
+        link = site["alternate url"] if "alternate url" in site else parsedFeed["feed"]["link"]
+        content += siteHeaderHTML.format(link, title)
         content += "<ul>"
 
         # Iterarte through entries and add each as a list item
