@@ -49,42 +49,46 @@ for filename in os.listdir(feedDir):
         content += sectionHeaderHTML.format(section)
 
         for site in feed["feeds"][section]:
-          # Parse Feed
-          parsedFeed = feedparser.parse(site["url"])
+          try:
+            # Parse Feed
+            parsedFeed = feedparser.parse(site["url"])
 
-          # Create header for site and start unordered list
-          # if an alternative title is specified in the json, use that instead of the feed title
-          # if an alternative url is specified in the json, use that instead of the feed url
-          title = site["title"] if "title" in site else parsedFeed["feed"]["title"]
-          link = site["alternate url"] if "alternate url" in site else parsedFeed["feed"]["link"]
+            # Create header for site and start unordered list
+            # if an alternative title is specified in the json, use that instead of the feed title
+            # if an alternative url is specified in the json, use that instead of the feed url
+            title = site["title"] if "title" in site else parsedFeed["feed"]["title"]
+            link = site["alternate url"] if "alternate url" in site else parsedFeed["feed"]["link"]
 
-          # Hold site content in a temp variable incase there are no entries
-          siteContent = ""
-          siteContent += siteHeaderHTML.format(link, title)
-          siteContent += "<ul>"
+            # Hold site content in a temp variable incase there are no entries
+            siteContent = ""
+            siteContent += siteHeaderHTML.format(link, title)
+            siteContent += "<ul>"
 
-          # Iterarte through entries and add each as a list item
-          hasEntries = False
-          for i in range(min(site["max posts"], len(parsedFeed["entries"]))):
-            entry = parsedFeed["entries"][i]
+            # Iterarte through entries and add each as a list item
+            hasEntries = False
+            for i in range(min(site["max posts"], len(parsedFeed["entries"]))):
+              entry = parsedFeed["entries"][i]
 
-            # Parse datetime and check if the entry is within the user's set timeframe
-            # If there isn't a published date for the item, assume the item was published now and allow it
-            entryDate = datetime.fromtimestamp(timegm(entry["published_parsed"])) if "published_parsed" in entry else datetime.now()
-            if entryDate > timeFrame:
-              hasEntries = True
-              siteContent += "<li>"
-              siteContent += entryHeaderHTML.format(entry["link"], entry["title"])
-              if site["full text"]:
-                siteContent += entryContentHTML.format(entry["summary"])
-              siteContent += "</li>"
-          
-          # Add the site's content to the email content only if there are entries to display
-          if hasEntries:
-            content += siteContent
+              # Parse datetime and check if the entry is within the user's set timeframe
+              # If there isn't a published date for the item, assume the item was published now and allow it
+              entryDate = datetime.fromtimestamp(timegm(entry["published_parsed"])) if "published_parsed" in entry else datetime.now()
+              if entryDate > timeFrame:
+                hasEntries = True
+                siteContent += "<li>"
+                siteContent += entryHeaderHTML.format(entry["link"], entry["title"])
+                if site["full text"]:
+                  siteContent += entryContentHTML.format(entry["summary"])
+                siteContent += "</li>"
+            
+            # Add the site's content to the email content only if there are entries to display
+            if hasEntries:
+              content += siteContent
 
-          # End unordered list
-          content += "</ul>"
+            # End unordered list
+            content += "</ul>"
+          except Exception as e:
+            content += "<h2>Error with site: {}</h2>".format(site["url"])
+            content += "<ul><li>{}</li><li>{}</li></ul>".format(str(type(e)).replace("<", "").replace(">", ""), e)
     except Exception as e:
       content = "<h1>Error while creating feed:</h1>"
       content += "<p>{}</p>".format(str(type(e)).replace("<", "").replace(">", ""))
