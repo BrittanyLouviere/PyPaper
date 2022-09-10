@@ -1,9 +1,10 @@
 {
-  "login": {
+  "settings": {
     "smtp server": "smtp.gmail.com",
     "smtp port": 587,
     "email address":"MyMail@gmail.com",
-    "email password":"My Gmail App Password"
+    "email password":"My Gmail App Password",
+    "time frame": "12:00"
   },
   "feeds": {
     "Weather": [

@@ -5,6 +5,8 @@ from email.message import EmailMessage
 from email.mime.text import MIMEText
 import feedparser
 import ssl
+from datetime import datetime, timedelta
+from calendar import timegm
 
 # Find all feeds in the ./Feeds directory except for the example feed
 feedDir = os.path.join(os.path.dirname(__file__), "Feeds")
@@ -16,10 +18,17 @@ for filename in os.listdir(feedDir):
     feed = json.load(file)
     file.close()
 
+    # Get time frame for feed items
+    if "time frame" in feed["settings"]:
+      hours, minutes = [int(x) for x in feed["settings"]["time frame"].split(":")]
+      timeFrame = datetime.now() - timedelta(hours=hours, minutes=minutes)
+    else:
+      timeFrame = datetime.min
+
     # Create email
     msg = EmailMessage()
     msg['Subject'] = "PyPaper - " + os.path.splitext(filename)[0]
-    msg['From'] = msg['To'] = feed["login"]["email address"]
+    msg['From'] = msg['To'] = feed["settings"]["email address"]
 
     # Fix common ssl issue
     if hasattr(ssl, '_create_unverified_context'):
@@ -51,11 +60,15 @@ for filename in os.listdir(feedDir):
         # Iterarte through entries and add each as a list item
         for i in range(min(site["max posts"], len(parsedFeed["entries"]))):
           entry = parsedFeed["entries"][i]
-          content += "<li>"
-          content += entryHeaderHTML.format(entry["link"], entry["title"])
-          if site["full text"]:
-            content += entryContentHTML.format(entry["summary"])
-          content += "</li>"
+
+          # Parse datetime and check if the entry is within the user's set timeframe
+          entryDate = datetime.fromtimestamp(timegm(entry.published_parsed))
+          if entryDate > timeFrame:
+            content += "<li>"
+            content += entryHeaderHTML.format(entry["link"], entry["title"])
+            if site["full text"]:
+              content += entryContentHTML.format(entry["summary"])
+            content += "</li>"
 
         # End unordered list
         content += "</ul>"
@@ -64,9 +77,9 @@ for filename in os.listdir(feedDir):
     msg.set_content(MIMEText(content, "html"))
 
     # Create SMTP connection
-    s = smtplib.SMTP(feed["login"]["smtp server"], feed["login"]["smtp port"])
+    s = smtplib.SMTP(feed["settings"]["smtp server"], feed["settings"]["smtp port"])
     s.starttls()
-    s.login(feed["login"]["email address"], feed["login"]["email password"])
+    s.login(feed["settings"]["email address"], feed["settings"]["email password"])
 
     # Send email
     s.send_message(msg)
