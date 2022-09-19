@@ -78,6 +78,8 @@ for filename in os.listdir(feedDir):
                   siteContent += "<li>"
                   siteContent += entryHeaderHTML.format(entry["link"], entry["title"])
                   if site["full text"]:
+                    if "<img" in entry["summary"]:
+                      entry["summary"] = '<img style="max-width: 100%"'.join(entry["summary"].split("<img"))
                     siteContent += entryContentHTML.format(entry["summary"])
                   siteContent += "</li>"
               except Exception as e:
