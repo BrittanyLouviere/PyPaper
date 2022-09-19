@@ -31,6 +31,10 @@ for filename in os.listdir(feedDir):
       # If not set, default to 5
       globalMaxPosts = feed["settings"]["max posts"] if "max posts" in feed["settings"] else 5
 
+      # Get global full text option
+      # If not set, default to false
+      globalFullText = feed["settings"]["full text"] if "full text" in feed["settings"] else False
+
       # Create email
       msg = EmailMessage()
       msg['Subject'] = "PyPaper - " + os.path.splitext(filename)[0]
@@ -64,6 +68,9 @@ for filename in os.listdir(feedDir):
             # Get site max posts if there is one, else use global
             siteMaxPosts = site["max posts"] if "max posts" in site else globalMaxPosts
 
+            # Get site "full text" if there is one, else use global
+            siteFullText = site["full text"] if "full text" in site else globalFullText
+
             # Parse Feed
             parsedFeed = feedparser.parse(site["url"])
 
@@ -91,7 +98,7 @@ for filename in os.listdir(feedDir):
                   hasEntries = True
                   siteContent += "<li>"
                   siteContent += entryHeaderHTML.format(entry["link"], entry["title"])
-                  if site["full text"]:
+                  if siteFullText:
                     if "<img" in entry["summary"]:
                       entry["summary"] = '<img style="max-width: 100%"'.join(entry["summary"].split("<img"))
                     siteContent += entryContentHTML.format(entry["summary"])
