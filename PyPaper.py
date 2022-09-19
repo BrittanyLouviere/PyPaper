@@ -94,7 +94,10 @@ for filename in os.listdir(feedDir):
             content += "</ul>"
           except Exception as e:
             content += "<h2>Error with site: {}</h2>".format(site["url"])
-            content += "<ul><li>{}</li><li>{}</li></ul>".format(str(type(e)).replace("<", "").replace(">", ""), e)
+            if parsedFeed["bozo"]:
+              content += "<ul><li>{}</li></ul>".format(str(parsedFeed["bozo_exception"]).replace("<", "").replace(">", ""))
+            else:
+              content += "<ul><li>{}</li><li>{}</li></ul>".format(str(type(e)).replace("<", "").replace(">", ""), e)
             
     except Exception as e:
       content = "<h1>Error while creating feed:</h1>"
