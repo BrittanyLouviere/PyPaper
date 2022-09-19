@@ -22,9 +22,9 @@ for filename in os.listdir(feedDir):
       # Get time frame for feed items
       if "time frame" in feed["settings"]:
         hours, minutes = [int(x) for x in feed["settings"]["time frame"].split(":")]
-        timeFrame = datetime.now() - timedelta(hours=hours, minutes=minutes)
+        globalTimeFrame = datetime.now() - timedelta(hours=hours, minutes=minutes)
       else:
-        timeFrame = datetime.min
+        globalTimeFrame = datetime.min
 
       # Create email
       msg = EmailMessage()
@@ -50,6 +50,12 @@ for filename in os.listdir(feedDir):
 
         for site in feed["feeds"][section]:
           try:
+            # Get site time frame if there is one, else just use global
+            siteTimeFrame = globalTimeFrame
+            if "time frame" in site:
+              hours, minutes = [int(x) for x in site["time frame"].split(":")]
+              siteTimeFrame = datetime.now() - timedelta(hours=hours, minutes=minutes)
+
             # Parse Feed
             parsedFeed = feedparser.parse(site["url"])
 
@@ -73,7 +79,7 @@ for filename in os.listdir(feedDir):
                 # Parse datetime and check if the entry is within the user's set timeframe
                 # If there isn't a published date for the item, assume the item was published now and allow it
                 entryDate = datetime.fromtimestamp(timegm(entry["published_parsed"])) if "published_parsed" in entry else datetime.now()
-                if entryDate > timeFrame:
+                if entryDate > siteTimeFrame:
                   hasEntries = True
                   siteContent += "<li>"
                   siteContent += entryHeaderHTML.format(entry["link"], entry["title"])

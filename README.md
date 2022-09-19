@@ -42,3 +42,4 @@ url            | string     | yes       | The url that is used to grab the rss f
 alternate url  | string     | no        | If this is specified, this url is used to form the hyperlink to the site in the email instead of the one specified in the feed's header.
 max posts      | int        | yes       | Specifies the maximum amount of posts that should be shown from the feed.
 full text      | boolean    | yes       | If set to false, only the post's title will be shown. If set to true, the summary content will also be shown. Some feeds may only provide a snippet of the content instead of the full text (especially news sites that require a subscription).
+time frame     | string     | no        | See "time frame" in the settings key table. This will override the global time frame for this site.
