@@ -9,11 +9,36 @@ A self hosted python script to compile and send RSS and ATOM feeds to your email
 - Something like cronjob to run the script at set times
 
 ## Feed JSON Notes
-- For simplicity, this script sends the email from and to the same email address
-- Most email clients will require you to use an "app passowrd" instead of you're actual password
-- The "time frame" value is optional. If set, it will limit shown entries to those within that time frame.
-  - EX: If "time frame" is set to "12:30" then only entries that were published in the last 12 hours and 30 minutes will be shown
-- The "title" key is optional if you wish to customize the name of an RSS/ATOM feed
-- The "alternate url" key is optional and allows the user to specify a different url to use as the site's hyperlink rather than the url specified in the site's feed
-- Set the "full text" value to true if you want the content of the feed item in the email instead of just the title
-  - Some feeds may only provide a snippet of the content instead of the full text
+The Json should be set up like the following:
+```json
+{
+  "settings" : {
+    "required settings keys" : "see table below"
+  },
+  "feeds" : {
+    "Feed Group Heading" : [
+      {
+        "required site keys" : "see table below"
+      }
+    ]
+  }
+}
+```
+
+See the provided `exampleFeed.json` in the `Feeds` folder for a working example.
+
+Settings Keys  | Value type | Required? | Description
+---------------|------------|-----------|----------------------------------------------------
+smtp server    | string     | yes       | This is specific to the email service you are using.
+smtp port      | int        | yes       | This is specific to the email service you are using.
+email address  | string     | yes       | The email address that will both send and recieve the feed email.
+email password | string     | yes       | NOT RECOMNDED TO USE YOUR NORMAL PASSWORD. Most email services ofer an "app password" that apps can use to interact and access you email.
+time frame     | string     | no        | In the format of "hh:mm". If a post from any rss feed is older than the secified time, it will be skipped. For example: if the value is "3:15" then any posts that were published more than 3 hours and 15 minutes ago are skipped.
+
+Site Keys      | Value type | Required? | Description
+---------------|------------|-----------|----------------------------------------------------
+title          | string     | no        | If a title is specified, it is used as the name of the site in the feed email rather than the title specified in the feed's header.
+url            | string     | yes       | The url that is used to grab the rss feed. This url MUSt be an RSS or ATOM formated webpage.
+alternate url  | string     | no        | If this is spcified, this url is used to form the hyperlink to the site in the email instead of the one specified in the feed's header.
+max posts      | int        | yes       | Specifies the maximum amount of posts that should be shows from the feed.
+full text      | boolean    | yes       | If set to false, only the posts title will be shown. If set to true, the summary content will also be shown. Some feeds may only provide a snippet of the content instead of the full text (especially news sites that require a subscription).
