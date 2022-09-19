@@ -19,12 +19,17 @@ for filename in os.listdir(feedDir):
       feed = json.load(file)
       file.close()
 
-      # Get time frame for feed items
+      # Get global time frame for feed items
+      # If not set, allow everything
       if "time frame" in feed["settings"]:
         hours, minutes = [int(x) for x in feed["settings"]["time frame"].split(":")]
         globalTimeFrame = datetime.now() - timedelta(hours=hours, minutes=minutes)
       else:
         globalTimeFrame = datetime.min
+
+      # Get global max posts
+      # If not set, default to 5
+      globalMaxPosts = feed["settings"]["max posts"] if "max posts" in feed["settings"] else 5
 
       # Create email
       msg = EmailMessage()
@@ -56,6 +61,9 @@ for filename in os.listdir(feedDir):
               hours, minutes = [int(x) for x in site["time frame"].split(":")]
               siteTimeFrame = datetime.now() - timedelta(hours=hours, minutes=minutes)
 
+            # Get site max posts if there is one, else use global
+            siteMaxPosts = site["max posts"] if "max posts" in site else globalMaxPosts
+
             # Parse Feed
             parsedFeed = feedparser.parse(site["url"])
 
@@ -72,7 +80,7 @@ for filename in os.listdir(feedDir):
 
             # Iterarte through entries and add each as a list item
             hasEntries = False
-            for i in range(min(site["max posts"], len(parsedFeed["entries"]))):
+            for i in range(min(siteMaxPosts, len(parsedFeed["entries"]))):
               try:
                 entry = parsedFeed["entries"][i]
 
