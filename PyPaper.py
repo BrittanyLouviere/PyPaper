@@ -12,7 +12,7 @@ from calendar import timegm
 feedDir = os.path.join(os.path.dirname(__file__), "Feeds")
 for filename in os.listdir(feedDir):
   if filename.endswith(".json") and not filename == "exampleFeed.json":
-    # Error handeling for entire content section
+    # Error handling for entire content section
     try:
       # Open and read feed file
       file = open(os.path.join(feedDir, filename), "r")
@@ -54,8 +54,11 @@ for filename in os.listdir(feedDir):
       entryContentHTML = "<p>{0}</p>"
 
       for section in feed["feeds"]:
+        # Hold the section content in a temp variable in case there are no entries
+        sectionContent = ""
+        sectionHasContent = False
         # Create header for feed section
-        content += sectionHeaderHTML.format(section)
+        sectionContent += sectionHeaderHTML.format(section)
 
         for site in feed["feeds"][section]:
           try:
@@ -85,7 +88,7 @@ for filename in os.listdir(feedDir):
             siteContent += siteHeaderHTML.format(link, title)
             siteContent += "<ul>"
 
-            # Iterarte through entries and add each as a list item
+            # Iterate through entries and add each as a list item
             hasEntries = False
             for i in range(min(siteMaxPosts, len(parsedFeed["entries"]))):
               try:
@@ -107,19 +110,23 @@ for filename in os.listdir(feedDir):
                 siteContent += "<li>Error with entry: {} {}</li>".format(str(type(e)).replace("<", "").replace(">", ""), e)
                 hasEntries = True
             
-            # Add the site's content to the email content only if there are entries to display
+            # Add the site's content to the section content only if there are entries to display
             if hasEntries:
-              content += siteContent
+              sectionHasContent = True
+              sectionContent += siteContent
 
             # End unordered list
-            content += "</ul>"
+            sectionContent += "</ul>"
           except Exception as e:
-            content += "<h2>Error with site: {}</h2>".format(site["url"])
+            sectionHasContent = True
+            sectionContent += "<h2>Error with site: {}</h2>".format(site["url"])
             if parsedFeed["bozo"]:
-              content += "<ul><li>{}</li></ul>".format(str(parsedFeed["bozo_exception"]).replace("<", "").replace(">", ""))
+              sectionContent += "<ul><li>{}</li></ul>".format(str(parsedFeed["bozo_exception"]).replace("<", "").replace(">", ""))
             else:
-              content += "<ul><li>{}</li><li>{}</li></ul>".format(str(type(e)).replace("<", "").replace(">", ""), e)
-            
+              sectionContent += "<ul><li>{}</li><li>{}</li></ul>".format(str(type(e)).replace("<", "").replace(">", ""), e)
+      # Add the section content to the email content only if there are entries to display
+      if sectionHasContent:
+        content += sectionContent      
     except Exception as e:
       content = "<h1>Error while creating feed:</h1>"
       content += "<p>{}</p>".format(str(type(e)).replace("<", "").replace(">", ""))
