@@ -124,9 +124,9 @@ for filename in os.listdir(feedDir):
               sectionContent += "<ul><li>{}</li></ul>".format(str(parsedFeed["bozo_exception"]).replace("<", "").replace(">", ""))
             else:
               sectionContent += "<ul><li>{}</li><li>{}</li></ul>".format(str(type(e)).replace("<", "").replace(">", ""), e)
-      # Add the section content to the email content only if there are entries to display
-      if sectionHasContent:
-        content += sectionContent      
+        # Add the section content to the email content only if there are entries to display
+        if sectionHasContent:
+          content += sectionContent      
     except Exception as e:
       content = "<h1>Error while creating feed:</h1>"
       content += "<p>{}</p>".format(str(type(e)).replace("<", "").replace(">", ""))
