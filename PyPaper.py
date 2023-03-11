@@ -102,7 +102,12 @@ for filename in os.listdir(feedDir):
               newLog[section][site["url"]] = []
 
             # Parse Feed
-            parsedFeed = feedparser.parse(site["url"])
+            for _ in range(5):
+              try:
+                parsedFeed = feedparser.parse(site["url"])
+                if not parsedFeed["bozo"]: break
+              except:
+                continue
 
             # Create header for site and start unordered list
             # if an alternative title is specified in the json, use that instead of the feed title
