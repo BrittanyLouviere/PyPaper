@@ -169,6 +169,9 @@ for filename in os.listdir(feedDir):
       content += "<p>{}</p>".format(str(type(e)).replace("<", "").replace(">", ""))
       content += "<p>{}</p>".format(e)
 
+    if len(content) == 0:
+      content += "<h1>You're all caught up!</h1>"
+
     # Add content to email message   
     msg.set_content(MIMEText(content, "html"))
 
