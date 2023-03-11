@@ -30,7 +30,7 @@ for filename in os.listdir(feedDir):
 
       # Get global max posts
       # If not set, default to 5
-      globalMaxPosts = feed["settings"]["max posts"] if "max posts" in feed["settings"] else 5
+      globalMaxPosts = feed["settings"]["max posts"] if "max posts" in feed["settings"] else 10
 
       # Get global full text option
       # If not set, default to false
