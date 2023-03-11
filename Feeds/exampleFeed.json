@@ -4,7 +4,9 @@
     "smtp port": 587,
     "email address":"MyMail@gmail.com",
     "email password":"My Gmail App Password",
-    "time frame": "12:00"
+    "time frame": "12:00",
+    "block list": ["shooting", "gun", "shot"],
+    "allow list": ["mass shooting", "This will block all articles about gun violence but will allow articles specifically about mass shootings."]
   },
   "feeds": {
     "Weather": [

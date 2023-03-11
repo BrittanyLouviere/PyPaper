@@ -40,6 +40,12 @@ for filename in os.listdir(feedDir):
       # If not set, default to true
       logArticles = feed["settings"]["log articles"] if "log articles" in feed["settings"] else True
 
+      # Get block list
+      blockList = [x.lower() for x in feed["settings"]["block list"]] if "block list" in feed["settings"] else []
+
+      # Get allow list
+      allowList = [x.lower() for x in feed["settings"]["allow list"]] if "allow list" in feed["settings"] else []
+
       # Retrieve article log if needed (create log if needed)
       if logArticles:
         try:
@@ -126,11 +132,21 @@ for filename in os.listdir(feedDir):
               try:
                 entry = parsedFeed["entries"][i]
 
+                # Check if any of the phrases in the block or allow list appear in 
+                # either the title or summary of the article
+                allText = "{0} {1}".format(entry["title"].lower(), entry["summary"].lower())
+                inBlock = any([x in allText for x in blockList])
+                inAllow = any([x in allText for x in allowList])
+
                 # Parse datetime and check if the entry is within the user's set timeframe
                 # If there isn't a published date for the item, assume the item was published now and allow it
                 # Also check if the user has enabled logs and if the entry is in the log
+                # Also Also check if the article should be blocked
                 entryDate = datetime.fromtimestamp(timegm(entry["published_parsed"])) if "published_parsed" in entry else datetime.now()
-                if entryDate > siteTimeFrame and (not logArticles or not entry["title"] in siteLog):
+                if (entryDate > siteTimeFrame and 
+                  (not logArticles or not entry["title"] in siteLog) and
+                  (not inBlock or inAllow)):
+
                   hasEntries = True
                   siteContent += "<li>"
                   siteContent += entryHeaderHTML.format(entry["link"], entry["title"])

@@ -37,6 +37,8 @@ max posts      | int        | no        | 10      | Specifies the maximum amount
 full text      | boolean    | no        | False   | If set to false, only each posts' title will be shown. If set to true, the summary content will also be shown. Some feeds may only provide a snippet of the content instead of the full text (especially news sites that require a subscription).
 time frame     | string     | no        |         | In the format of "hh:mm". If a post from any rss feed is older than the specified time, it will be skipped. For example: if the value is "3:15" then any posts that were published more than 3 hours and 15 minutes ago are skipped.
 log articles   | boolean    | no        | True    | Allows the script to make a log of previous articles and not to resend these articles if they appear in the log.
+block list     | [string]   | no        |         | If an article has a word or phrase that's in the block list, it will not be added to the feed.
+allow list     | [string]   | no        |         | This list overrides the block list. If an article contains a word or phrase from this list, it will show up in the feed even if the block list would otherwise prevent it.
 
 Site Keys      | Value type | Required? | Description
 ---------------|------------|-----------|----------------------------------------------------
