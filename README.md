@@ -36,6 +36,7 @@ email password | string     | yes       | IT IS NOT RECOMENDED TO USE YOUR NORMA
 max posts      | int        | no        | Specifies the maximum amount of posts that should be shown from each feed. Defaults to 5 if not specified.
 full text      | boolean    | no        | Defaults to false. If set to false, only each posts' title will be shown. If set to true, the summary content will also be shown. Some feeds may only provide a snippet of the content instead of the full text (especially news sites that require a subscription).
 time frame     | string     | no        | In the format of "hh:mm". If a post from any rss feed is older than the secified time, it will be skipped. For example: if the value is "3:15" then any posts that were published more than 3 hours and 15 minutes ago are skipped.
+log articles   | boolean    | no        | Defaults to true. Allows the script to make a log of previous articles and not to resend these articles if they appear in the log.
 
 Site Keys      | Value type | Required? | Description
 ---------------|------------|-----------|----------------------------------------------------

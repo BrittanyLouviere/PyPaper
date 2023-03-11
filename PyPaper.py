@@ -10,6 +10,7 @@ from calendar import timegm
 
 # Find all feeds in the ./Feeds directory except for the example feed
 feedDir = os.path.join(os.path.dirname(__file__), "Feeds")
+articleLogDir = os.path.join(os.path.dirname(__file__), "ArticleLogs")
 for filename in os.listdir(feedDir):
   if filename.endswith(".json") and not filename == "exampleFeed.json":
     # Error handling for entire content section
@@ -34,6 +35,20 @@ for filename in os.listdir(feedDir):
       # Get global full text option
       # If not set, default to false
       globalFullText = feed["settings"]["full text"] if "full text" in feed["settings"] else False
+
+      # Get log article option
+      # If not set, default to true
+      logArticles = feed["settings"]["log articles"] if "log articles" in feed["settings"] else True
+
+      # Retrieve article log if needed (create log if needed)
+      if logArticles:
+        try:
+          with open(os.path.join(articleLogDir, filename), "r") as logFile:
+            oldLog = json.load(logFile)
+        except Exception as e:
+          os.makedirs(articleLogDir, exist_ok=True)
+          oldLog = {}
+        newLog = {}
 
       # Create email
       msg = EmailMessage()
@@ -60,6 +75,10 @@ for filename in os.listdir(feedDir):
         # Create header for feed section
         sectionContent += sectionHeaderHTML.format(section)
 
+        # Create dictionary for this section's log
+        if logArticles:
+          newLog[section] = {}
+
         for site in feed["feeds"][section]:
           try:
             # Get site time frame if there is one, else just use global
@@ -73,6 +92,14 @@ for filename in os.listdir(feedDir):
 
             # Get site "full text" if there is one, else use global
             siteFullText = site["full text"] if "full text" in site else globalFullText
+
+            # Get this site's log and create a dictionary for the new one
+            if logArticles:
+              try:
+                siteLog = oldLog[section][site["url"]]
+              except:
+                siteLog = []
+              newLog[section][site["url"]] = []
 
             # Parse Feed
             parsedFeed = feedparser.parse(site["url"])
@@ -96,8 +123,9 @@ for filename in os.listdir(feedDir):
 
                 # Parse datetime and check if the entry is within the user's set timeframe
                 # If there isn't a published date for the item, assume the item was published now and allow it
+                # Also check if the user has enabled logs and if the entry is in the log
                 entryDate = datetime.fromtimestamp(timegm(entry["published_parsed"])) if "published_parsed" in entry else datetime.now()
-                if entryDate > siteTimeFrame:
+                if entryDate > siteTimeFrame and (not logArticles or not entry["title"] in siteLog):
                   hasEntries = True
                   siteContent += "<li>"
                   siteContent += entryHeaderHTML.format(entry["link"], entry["title"])
@@ -106,6 +134,10 @@ for filename in os.listdir(feedDir):
                       entry["summary"] = '<img style="max-width: 100%"'.join(entry["summary"].split("<img"))
                     siteContent += entryContentHTML.format(entry["summary"])
                   siteContent += "</li>"
+
+                # If logs are enabled, add the current entry to the log
+                if logArticles:
+                  newLog[section][site["url"]].append(entry["title"])
               except Exception as e:
                 siteContent += "<li>Error with entry: {} {}</li>".format(str(type(e)).replace("<", "").replace(">", ""), e)
                 hasEntries = True
@@ -143,3 +175,10 @@ for filename in os.listdir(feedDir):
     # Send email
     s.send_message(msg)
     s.quit()
+
+    # Save the new log to the log directory
+    if logArticles:
+      os.makedirs(articleLogDir, exist_ok=True)
+      with open(os.path.join(articleLogDir, filename), "w") as logFile:
+        logFile.truncate(0)
+        json.dump(newLog, logFile)

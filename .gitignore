@@ -1,6 +1,7 @@
 # Custom PyPaper ginores
 Feeds/*
 !Feeds/exampleFeed.json
+ArticleLogs/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
